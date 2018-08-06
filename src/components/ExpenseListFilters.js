@@ -8,7 +8,6 @@ import { DateRangePicker } from 'react-dates';
 import { setTextFilter, sortByAmount, sortByDate, setStartDate, setEndDate } from '../actions/filters';
 
 import selectExpenses from '../selectors/expenses';
-import { start } from 'repl';
 
 export class ExpenseListFilters extends React.Component {
   state = {

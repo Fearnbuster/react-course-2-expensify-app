@@ -5,9 +5,6 @@ import AppRouter from './routers/AppRouter';
 import { Provider } from 'react-redux';
 
 import configureStore from './store/configureStore';
-import { addExpense, editExpense, removeExpense } from './actions/expenses';
-import { setEndDate, setStartDate, setTextFilter, sortByAmount, sortByDate } from './actions/filters';
-import getVisibleExpenses from './selectors/expenses';
 
 import 'normalize.css/normalize.css';
 import './styles/styles.scss';

@@ -6,7 +6,6 @@ import { DateRangePicker } from 'react-dates';
 
 import { ExpenseListFilters } from '../../components/ExpenseListFilters';
 import { filters, altFilters } from '../fixtures/filters';
-import { isMoment } from '../../../../../../../../../AppData/Local/Microsoft/TypeScript/2.9/node_modules/moment';
 
 let setTextFilter, sortByDate, sortByAmount, setStartDate, setEndDate, wrapper;
 
