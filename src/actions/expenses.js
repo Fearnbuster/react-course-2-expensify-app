@@ -1,5 +1,7 @@
 
 import firestore from '../firebase/firebase';
+import { resolve } from 'url';
+import { rejects } from 'assert';
 
 export const addExpense = (expense) => ({
   type: 'ADD_EXPENSE',
@@ -38,4 +40,28 @@ export const removeExpense = ({ id }) => ({
   type: 'REMOVE_EXPENSE',
   id
 });
+
+export const setExpenses = (expenses) => ({
+  type: 'SET_EXPENSES',
+  expenses
+});
+
+export const startSetExpenses = () => {
+  return (dispatch) => {
+    return firestore.collection('expenses')
+    .get()
+    .then((expensesRef) => {
+      const expensesData = [];
+
+      expensesRef.docs.forEach((doc) => {
+        expensesData.push({
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+
+      dispatch(setExpenses(expensesData));
+    });
+  }
+};
 

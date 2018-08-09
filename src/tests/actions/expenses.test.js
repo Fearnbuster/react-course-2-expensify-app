@@ -3,12 +3,45 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import firestore from '../../firebase/firebase';
 
-import { startAddExpense, addExpense, editExpense, removeExpense } from '../../actions/expenses';
+import { startAddExpense, addExpense, editExpense, removeExpense, setExpenses, startSetExpenses } from '../../actions/expenses';
 import expenses from '../fixtures/expenses';
 
 const createMockStore = configureMockStore([thunk]);
 
+const clearTestCollection = async (collectionRef) => {
+  const collectionData = await collectionRef.get();
+
+  const batch = firestore.batch();
+  collectionData.docs.forEach(async (doc) => {
+    batch.delete(doc.ref);
+  });
+
+  await batch.commit();
+};
+
+const setupTestCollection = async (collectionRef) => {
+  for (const expense of expenses) {
+    const { 
+      id, 
+      description, 
+      note, 
+      amount, 
+      createdAt } = expense;
+
+    await collectionRef.doc(id).set({ description, note, amount, createdAt });
+  }
+};
+
 describe('actions/expenses', () => {
+  beforeEach(async (done) => {
+    const collectionRef = firestore.collection('expenses');
+
+    await clearTestCollection(collectionRef);
+    await setupTestCollection(collectionRef);
+    
+    done();
+  });
+
   it('should setup add expense action object with provided values', () => {
 
     const action = addExpense(expenses[2]);
@@ -99,5 +132,28 @@ describe('actions/expenses', () => {
       type: 'REMOVE_EXPENSE',
       id: '123abc'
     });
+  });
+
+  it('should setup set expense action object with data', () => {
+    const action = setExpenses(expenses);
+
+    expect(action).toEqual({
+      type: 'SET_EXPENSES',
+      expenses
+    });
+  });
+
+  it('should fetch the expenses for database', async (done) => {
+    const store = createMockStore({});
+    await store.dispatch(startSetExpenses());
+
+    const actions = store.getActions();
+    
+    expect(actions[0]).toEqual({
+      type: 'SET_EXPENSES',
+      expenses
+    });
+
+    done();
   });
 });
