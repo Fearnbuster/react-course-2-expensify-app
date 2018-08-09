@@ -5,3 +5,5 @@ import Adapater from 'enzyme-adapter-react-16';
 Enzyme.configure({
   adapter: new Adapater()
 });
+
+require('dotenv').config({ path: '.env.test' });
