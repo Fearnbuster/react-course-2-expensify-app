@@ -1,7 +1,5 @@
 
 import firestore from '../firebase/firebase';
-import { resolve } from 'url';
-import { rejects } from 'assert';
 
 export const addExpense = (expense) => ({
   type: 'ADD_EXPENSE',
@@ -40,6 +38,17 @@ export const removeExpense = ({ id }) => ({
   type: 'REMOVE_EXPENSE',
   id
 });
+
+export const startRemoveExpense = ({ id }) => {
+  return (dispatch) => {
+    firestore.collection('expenses')
+      .doc(id)
+      .delete()
+      .then(() => {
+        return dispatch(removeExpense({ id }));
+      });
+  };
+};
 
 export const setExpenses = (expenses) => ({
   type: 'SET_EXPENSES',

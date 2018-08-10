@@ -40,7 +40,7 @@ describe('components/EditExpensePage', () => {
     const wrapper = shallow(<EditExpensePage 
       expense={expense} 
       match={{ params }} 
-      removeExpense={removeExpenseSpy}
+      startRemoveExpense={removeExpenseSpy}
       history={historySpy} 
     />);
 

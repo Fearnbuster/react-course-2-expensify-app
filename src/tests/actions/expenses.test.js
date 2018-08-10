@@ -3,7 +3,14 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import firestore from '../../firebase/firebase';
 
-import { startAddExpense, addExpense, editExpense, removeExpense, setExpenses, startSetExpenses } from '../../actions/expenses';
+import { 
+  addExpense, 
+  startAddExpense, 
+  editExpense, 
+  removeExpense, 
+  startRemoveExpense, 
+  setExpenses, 
+  startSetExpenses } from '../../actions/expenses';
 import expenses from '../fixtures/expenses';
 
 const createMockStore = configureMockStore([thunk]);
@@ -33,6 +40,8 @@ const setupTestCollection = async (collectionRef) => {
 };
 
 describe('actions/expenses', () => {
+  jest.setTimeout(10000);
+
   beforeEach(async (done) => {
     const collectionRef = firestore.collection('expenses');
 
@@ -132,6 +141,21 @@ describe('actions/expenses', () => {
       type: 'REMOVE_EXPENSE',
       id: '123abc'
     });
+  });
+
+  it('should remove an expense from the database', async (done) => {
+    const id = expenses[0].id;
+    const store = createMockStore({});
+
+    await store.dispatch(startRemoveExpense({ id }));
+
+    const expense = await firestore.collection('expenses')
+      .doc(id)
+      .get();
+
+    expect(expense.exists).toBeFalsy(); 
+
+    done();
   });
 
   it('should setup set expense action object with data', () => {
