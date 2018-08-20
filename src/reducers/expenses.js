@@ -33,7 +33,6 @@ export default (state = expensesReducerDefaultState, action) => {
     }
 
     case 'SET_EXPENSES': {
-      console.log(action.expenses);
       return action.expenses;
     }
 

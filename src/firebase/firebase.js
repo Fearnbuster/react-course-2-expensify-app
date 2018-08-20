@@ -1,5 +1,6 @@
 
 import firebase from 'firebase/app';
+import 'firebase/auth';
 
 import 'firebase/firestore';
 
@@ -15,10 +16,11 @@ const config = {
 firebase.initializeApp(config);
 
 const firestore = firebase.firestore();
+const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
 
 firestore.settings({
   timestampsInSnapshots: true
 });
 
-export { firebase, firestore as default };
+export { firebase, googleAuthProvider, firestore as default };
 

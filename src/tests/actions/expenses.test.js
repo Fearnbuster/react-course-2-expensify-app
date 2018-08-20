@@ -7,6 +7,7 @@ import {
   addExpense, 
   startAddExpense, 
   editExpense, 
+  startEditExpense,
   removeExpense, 
   startRemoveExpense, 
   setExpenses, 
@@ -133,6 +134,27 @@ describe('actions/expenses', () => {
         note: 'New note value'
       }
     });
+  });
+
+  it('should edit expense in database', async (done) => {
+    const id = expenses[0].id;
+    const store = createMockStore({});
+    const updates = {
+      description: 'Edit Test',
+      amount: 1000,
+      createdAt: 50000,
+      note: 'This is an edit test'
+    }; 
+
+    await store.dispatch(startEditExpense(id, updates));
+
+    const expense = await firestore.collection('expenses')
+      .doc(id)
+      .get();
+
+    expect(expense.data()).toEqual(updates); 
+
+    done();
   });
 
   it('should setup remove expense action object', () => {
