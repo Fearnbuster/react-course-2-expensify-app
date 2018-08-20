@@ -14,6 +14,9 @@ import {
   startSetExpenses } from '../../actions/expenses';
 import expenses from '../fixtures/expenses';
 
+const uid = 'thisIsMyTestUID';
+const collectionPath = `users/${uid}/expenses`;
+const defaultAuthState = { auth: { uid } };
 const createMockStore = configureMockStore([thunk]);
 
 const clearTestCollection = async (collectionRef) => {
@@ -44,7 +47,7 @@ describe('actions/expenses', () => {
   jest.setTimeout(10000);
 
   beforeEach(async (done) => {
-    const collectionRef = firestore.collection('expenses');
+    const collectionRef = firestore.collection(collectionPath);
 
     await clearTestCollection(collectionRef);
     await setupTestCollection(collectionRef);
@@ -53,7 +56,6 @@ describe('actions/expenses', () => {
   });
 
   it('should setup add expense action object with provided values', () => {
-
     const action = addExpense(expenses[2]);
 
     expect(action).toEqual({
@@ -63,7 +65,7 @@ describe('actions/expenses', () => {
   });
 
   it('should add expense to database and store', async (done) => {
-    const store = createMockStore({});
+    const store = createMockStore(defaultAuthState);
     const expenseData = {
       description: 'Mouse',
       amount: 3000,
@@ -84,7 +86,7 @@ describe('actions/expenses', () => {
     });
 
     const expense = await firestore
-      .collection('expenses')
+      .collection(collectionPath)
       .doc(actions[0].expense.id)
       .get();
 
@@ -94,7 +96,7 @@ describe('actions/expenses', () => {
   });
 
   it('should add expense with defaults to database and store', async (done) => {
-    const store = createMockStore({});
+    const store = createMockStore(defaultAuthState);
     const expectedData = {
       description: '',
       note: '',
@@ -115,7 +117,7 @@ describe('actions/expenses', () => {
     });
 
     const expense = await firestore
-      .collection('expenses')
+      .collection(collectionPath)
       .doc(actions[0].expense.id)
       .get();
 
@@ -138,7 +140,7 @@ describe('actions/expenses', () => {
 
   it('should edit expense in database', async (done) => {
     const id = expenses[0].id;
-    const store = createMockStore({});
+    const store = createMockStore(defaultAuthState);
     const updates = {
       description: 'Edit Test',
       amount: 1000,
@@ -148,7 +150,7 @@ describe('actions/expenses', () => {
 
     await store.dispatch(startEditExpense(id, updates));
 
-    const expense = await firestore.collection('expenses')
+    const expense = await firestore.collection(collectionPath)
       .doc(id)
       .get();
 
@@ -167,11 +169,11 @@ describe('actions/expenses', () => {
 
   it('should remove an expense from the database', async (done) => {
     const id = expenses[0].id;
-    const store = createMockStore({});
+    const store = createMockStore(defaultAuthState);
 
     await store.dispatch(startRemoveExpense({ id }));
 
-    const expense = await firestore.collection('expenses')
+    const expense = await firestore.collection(collectionPath)
       .doc(id)
       .get();
 
@@ -190,7 +192,7 @@ describe('actions/expenses', () => {
   });
 
   it('should fetch the expenses for database', async (done) => {
-    const store = createMockStore({});
+    const store = createMockStore(defaultAuthState);
     await store.dispatch(startSetExpenses());
 
     const actions = store.getActions();
